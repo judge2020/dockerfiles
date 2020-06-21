@@ -19,7 +19,7 @@ jobs:
         run: |
           docker login docker.pkg.github.com -u ${{ github.actor }} -p $GH_TOKEN
         env:
-          GH_TOKEN: ${{ secret.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - run: |
           docker build . --tag build -f ubuntu-python36.Dockerfile
       - run: |
