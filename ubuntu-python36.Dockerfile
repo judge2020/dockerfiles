@@ -8,12 +8,20 @@ ENV LANG C.UTF-8
 
 # runtime dependencies
 RUN apt-get update && apt-get install -y --no-install-recommends \
+        build-essential \
 		tcl \
-		tk \
         wget \
         ca-certificates \
-        gpg \
+        gnupg2 \
         dirmngr \
+        libreadline-gplv2-dev \
+        libncursesw5-dev \
+        libssl-dev \
+        libsqlite3-dev \
+        tk-dev \
+        libgdbm-dev \
+        libc6-dev \
+        libbz2-dev \
 	&& rm -rf /var/lib/apt/lists/*
 
 ENV GPG_KEY 0D96DF4D4110E5C43FBFB17F2D347EA6AA65421D
