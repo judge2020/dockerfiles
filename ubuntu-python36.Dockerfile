@@ -52,6 +52,7 @@ RUN set -ex \
 	&& gnuArch="$(dpkg-architecture --query DEB_BUILD_GNU_TYPE)" \
 	&& ./configure \
 		--build="$gnuArch" \
+                --enable-optimizations \
 		--enable-loadable-sqlite-extensions \
 		--enable-shared \
 		--with-system-expat \
