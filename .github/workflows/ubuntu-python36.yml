@@ -9,22 +9,26 @@ on:
           - 'ubuntu-python36.Dockerfile'
           - '.github/workflows/ubuntu-python36.yml'
 
+env:
+  IMAGE_NAME: python36
+
 name: ubuntu-python
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     steps:
       - uses: actions/checkout@v2
-      - name: Login to GPR
-        run: |
-          docker login docker.pkg.github.com -u ${{ github.actor }} -p $GH_TOKEN
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Login to GHCR
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
       - run: |
-          docker build . --tag build -f ubuntu-python36.Dockerfile
+          docker build . -f ubuntu-python36.Dockerfile --tag $IMAGE_NAME --label "runnumber=${GITHUB_RUN_ID}"
       - run: |
-          image=docker.pkg.github.com/judge2020/dockerfiles/ubuntu-python36
-          docker tag build $image:${GITHUB_SHA:0:20}
-          docker tag build $image:$(date +%s)
-          docker tag build $image:latest
-          docker push $image
+          IMAGE_ID=ghcr.io/${{ github.repository_owner }}/$IMAGE_NAME
+          IMAGE_ID=$(echo $IMAGE_ID | tr '[A-Z]' '[a-z]')
+          VERSION=$(echo "${{ github.ref }}" | sed -e 's,.*/\(.*\),\1,')
+          [[ "${{ github.ref }}" == "refs/tags/"* ]] && VERSION=$(echo $VERSION | sed -e 's/^v//')
+          [ "$VERSION" == "master" ] && VERSION=latest
+          echo IMAGE_ID=$IMAGE_ID
+          echo VERSION=$VERSION
+          docker tag $IMAGE_NAME $IMAGE_ID:$VERSION
+          docker push $IMAGE_ID:$VERSION
